@@ -1,2 +1,2 @@
 ## Space Destroyer
-Click here to play
+Click [here](shooter/shooter.html) to play
