@@ -3,6 +3,7 @@
         <script>
         var turret;
         var fleet;
+        var destroyer;
         var bullets;
         var myScore;
         var counter;
@@ -115,6 +116,39 @@
                  }
              }
          }
+
+         class SS2 {
+             constructor(x, y) {
+                 this.x = x;
+                 this.y = y;
+                 this.width = 200;
+                 this.height = 65;
+                 this.bottom = this.y + this.height;
+                 this.left = this.x;
+                 this.right = this.x + this.width;
+                 this.isFlying = true;
+                 this.image = new Image();
+                 this.image.src = "images/ss2.png"
+            }
+            isCollide() {
+                for (var i = 0; i < bullets.length; i++) {
+                    if(bullets[i].top <= this.bottom && bullets[i].left <= this.right && bullets[i].right >= this.left) {
+                        bullets[i].isLive = false;
+                        this.isFlying = false;
+                        myScore += 2
+                    }
+                }
+            }
+            updatePosition() {
+                this.x += 5;
+                this.left = this.x;
+                this.right = this.x + this.width;
+            }
+            draw(ctx) {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            }
+        }
+
          class Bullet {
              constructor(x, y) {
                  this.x = x;
@@ -200,11 +234,13 @@
              myScore = 0;
              // var spaceShip = new SpaceShip((Math.random() * 1800), (Math.random() * 450));
              // var spaceShip2 = new SpaceShip((Math.random() * 1800), (Math.random() * 450));
-             turret = new Turret(200, canvasHeight);
+             var ss2 = new SS2(0, 100);
+             turret = new Turret(1000, canvasHeight);
              fleet = [];
              bullets = [];
              bombs = [];
-             console.log("ships constructed")
+             destroyer = [];
+             destroyer.push(ss2);
              // fleet.push(spaceShip);
              // fleet.push(spaceShip2);
              console.log(fleet.length);
@@ -221,6 +257,22 @@
                     fleet[i].isCollide();
                 }
                 turret.draw(ctx);
+                for(var i = 0; i < destroyer.length; i++) {
+                    if (destroyer[i].isFlying == true) {
+                        destroyer[i].isCollide();
+                        destroyer[i].updatePosition();
+                    }
+                }
+                for(var i = 0; i < destroyer.length; i++) {
+                    if(destroyer[i].isFlying == false) {
+                        destroyer.splice(i, 1);
+                    }
+                }
+                for(var i = 0; i < destroyer.length; i++) {
+                    if(destroyer[i].isFlying == true) {
+                        destroyer[i].draw(ctx);
+                    }
+                }
 
                 for(var i = 0; i < bullets.length; i++) {
                     if(bullets[i].isLive == false) {
