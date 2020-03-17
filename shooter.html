@@ -1,0 +1,387 @@
+<html>
+    <head>
+        <script>
+        var turret;
+        var fleet;
+        var destroyer;
+        var bullets;
+        var myScore;
+        var counter;
+        var counter2;
+        var bombs;
+        var lives;
+        var canvasWidth;
+        var canvasHeight;
+        class Turret {
+             constructor(x, y) {
+                this.x = x;
+                this.y = y - 80;
+                this.width = 160;
+                this.height = 80;
+                this.isSurv = true;
+                this.bottom = this.y + this.height;
+                this.left = this.x;
+                this. right = this.x + this.width;
+                this.color = "black";
+                this.image = new Image();
+                this.image.src = "images/tanknew.png";
+            }
+            draw(ctx) {
+                if(this.isSurv == true) {
+                  //  ctx.fillStyle = this.color;
+                  //  ctx.fillRect(this.x, this.y, this.width, this.height)
+                    ctx.drawImage(this.image,this.x, this.y, this.width, this.height);
+                }
+            }
+            moveLeft(dis) {
+                this.x -= dis;
+                this.left = this.x;
+                this.right = this.x + this.width;
+                if (this.x < 0) {
+                    this.x = 0;
+                }
+            }
+            moveRight(dis) {
+                this.x += dis;
+                this.left = this.x;
+                this.right = this.x + this.width;
+                if (this.x + this.width >= canvasWidth) {
+                    this.x = canvasWidth - this.width;
+                }
+            }
+            isCollide() {
+                for(var i = 0; i < bombs.length; i++) {
+                    if (bombs[i].bottom >= this.y && bombs[i].left <= this.right && bombs[i].right >= this.left) {
+                        bombs[i].isFunc = false;
+                        lives -= 1;
+                        bombs[i].width += 30
+                        bombs[i].image.src = "images/explosion.png";
+                        if (lives == 0) {
+                            this.width += 10
+                            this.height += 10
+                            this.image.src = "images/explosion.png";
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+         }
+
+         class SpaceShip {
+             constructor(x, y) {
+                 this.x = x;
+                 this.y = y;
+                 this.width = 175;
+                 this.height = 50;
+                 this.bottom = this.y + this.height;
+                 this.left = this.x;
+                 this.right = this.x + this.width;
+                 this.isActive = true;
+                 this.fuel = 500;
+                 this.image = new Image();
+                 this.image.src = "images/spaceship.png";
+
+             }
+             updatePosition() {
+                 if (Math.random() < .9)
+                    return;
+                 var delta = (Math.random() * 60) - 30;
+                 this.x += delta;
+                 if(this.x < 0) {
+                     this.x = 0;
+                 }
+                 if(this.x > canvasWidth - this.width)
+                    this.x = canvasWidth  - this.width;
+                this.left = this.x;
+                this.right = this.x + this.width;
+             }
+             draw(ctx) {
+                 if(this.isActive == true) {
+                    // ctx.fillStyle = "red";
+                    // ctx.fillRect(this.x, this.y, this.width, this.height);
+                     ctx.drawImage(this.image,this.x, this.y, this.width, this.height);
+
+                 }
+             }
+             isCollide() {
+                 for (var i = 0; i < bullets.length; i++) {
+                     if(bullets[i].top <= this.bottom && bullets[i].left <= this.right && bullets[i].right >= this.left) {
+                         bullets[i].isLive = false;
+                         this.isActive = false;
+                         this.width += 10
+                         this.height += 10
+                         this.image.src = "images/explosion.png";
+                         myScore += 1
+                     }
+                 }
+             }
+         }
+
+         class SS2 {
+             constructor(x, y) {
+                 this.x = x;
+                 this.y = y;
+                 this.width = 200;
+                 this.height = 65;
+                 this.bottom = this.y + this.height;
+                 this.left = this.x;
+                 this.right = this.x + this.width;
+                 this.isFlying = true;
+                 this.image = new Image();
+                 this.image.src = "images/ss2.png"
+            }
+            isCollide() {
+                for (var i = 0; i < bullets.length; i++) {
+                    if(bullets[i].top <= this.bottom && bullets[i].left <= this.right && bullets[i].right >= this.left) {
+                        bullets[i].isLive = false;
+                        this.isFlying = false;
+                        myScore += 2
+                    }
+                }
+            }
+            updatePosition() {
+                this.x += 7;
+                this.left = this.x;
+                this.right = this.x + this.width;
+            }
+            draw(ctx) {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            }
+        }
+
+         class Bullet {
+             constructor(x, y) {
+                 this.x = x;
+                 this.y = y;
+                 this.width = 20;
+                 this.height = 80;
+                 this.speed = 50;
+                 this.isLive = true;
+                 this.top = this.y;
+                 this.left = this.x;
+                 this.right = this.x + this.width;
+                 this.image = new Image();
+                 this.image.src = "images/bullet.png";
+             }
+             draw(ctx) {
+                 if(this.isLive == true) {
+                     this.y -= this.speed;
+                     this.top = this.y;
+                     if (this.y < 0) {
+                         this.isLive = false;
+                     }
+                     //ctx.fillStyle = "lightGreen";
+                     //ctx.fillRect(this.x, this.y, this.width, this.height);
+                     ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+
+                 }
+             }
+         }
+         class Bomb {
+             constructor(x, y) {
+                 this.x = x;
+                 this.y = y;
+                 this.width = 40;
+                 this.height = 60;
+                 this.speed = 50;
+                 this.isFunc = true;
+                 this.bottom = this.y + this.height;
+                 this.left = this.x;
+                 this.right = this.x + this.width;
+                 this.fall = 5;
+                 this.image = new Image();
+                 this.image.src= "images/alienbomb.png";
+             }
+             draw(ctx) {
+                 if(this.isFunc == false) {
+                    return;
+                }
+                this.y += this.fall;
+                this.bottom = this.y + this.height;
+                if (this.y + this.height >= canvasHeight) {
+                    this.isFunc = false;
+                }
+                //ctx.fillStyle = "darkBlue";
+                //ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+             }
+         }
+         class B2 {
+             constructor(x, y) {
+                 this.x = x;
+                 this.y = y;
+                 this.width = 60;
+                 this.height = 40;
+                 this.speed = 50;
+                 this.isFunc = true;
+                 this.bottom = this.y + this.height;
+                 this.left = this.x;
+                 this.right = this.x + this.width;
+                 this.fall = 5;
+                 this.slant = 2;
+                 this.image = new Image();
+                 this.image.src= "images/B2_img.png";
+             }
+             draw(ctx) {
+                 if(this.isFunc == false) {
+                    return;
+                }
+                this.y += this.fall;
+                this.x += this.slant;
+                this.bottom = this.y + this.height;
+                this.left = this.x;
+                this.right = this.x + this.width;
+                if (this.y + this.height >= canvasHeight) {
+                    this.isFunc = false;
+                }
+                //ctx.fillStyle = "darkBlue";
+                //ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+             }
+         }
+
+         function checkKey(e) {
+             e = e || window.event;
+             if(e.keyCode == '39') {
+                 //right
+                 turret.moveRight(50);
+             }
+             else if(e.keyCode == '37') {
+                 //left
+                 turret.moveLeft(50);
+             }
+             else if(e.keyCode == '32') {
+                 //spacebar
+                 var bullet = new Bullet(turret.x + turret.width/2, turret.y);
+                 bullets.push(bullet);
+             }
+         }
+         function startGame() {
+             console.log("game started")
+             var c = document.getElementById("myCanvas");
+             var ctx = c.getContext("2d");
+             canvasHeight = c.height;
+             canvasWidth = c.width;
+             lives = 3;
+             myScore = 0;
+             // var spaceShip = new SpaceShip((Math.random() * 1800), (Math.random() * 450));
+             // var spaceShip2 = new SpaceShip((Math.random() * 1800), (Math.random() * 450));
+             var ss2 = new SS2(0, 100);
+             turret = new Turret(1000, canvasHeight);
+             fleet = [];
+             bullets = [];
+             bombs = [];
+             destroyer = [];
+             destroyer.push(ss2);
+             // fleet.push(spaceShip);
+             // fleet.push(spaceShip2);
+             console.log(fleet.length);
+             console.log("destroyer length: " + destroyer.length)
+             counter = 0;
+             counter2 = 0;
+             setInterval(function () {
+                if (lives == 0 ) {
+                    turret.draw(ctx);
+                    return;
+                }
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+                for(var i = 0; i < fleet.length; i++) {
+                    fleet[i].updatePosition();
+                    fleet[i].isCollide();
+                }
+                turret.draw(ctx);
+                for(var i = 0; i < destroyer.length; i++) {
+                    if (destroyer[i].isFlying == true) {
+                        destroyer[i].isCollide();
+                        destroyer[i].updatePosition();
+                    }
+                }
+                for(var i = 0; i < destroyer.length; i++) {
+                    if(destroyer[i].isFlying == false) {
+                        destroyer.splice(i, 1);
+                    }
+                }
+                for(var i = 0; i < destroyer.length; i++) {
+                    if(destroyer[i].isFlying == true) {
+                        destroyer[i].draw(ctx);
+                    }
+                }
+
+                for(var i = 0; i < bullets.length; i++) {
+                    if(bullets[i].isLive == false) {
+                        bullets.splice(i, 1);
+                    }
+                }
+                for(var i = 0; i < bullets.length; i++) {
+                    bullets[i].draw(ctx);
+                }
+
+                for(var i = 0; i < fleet.length; i++) {
+                    if(fleet[i].isActive == false) {
+                        fleet.splice(i, 1);
+                    }
+                }
+                for(var i = 0; i < bombs.length; i++) {
+                    if(bombs[i].isFunc == false) {
+                        bombs.splice(i, 1);
+                    }
+                }
+                for(var i = 0; i < fleet.length; i++) {
+                    if(fleet[i].fuel % 100 == 0 ) {
+                        var bomb = new Bomb(fleet[i].x + 30, fleet[i].y + fleet[i]. height);
+                        bombs.push(bomb);
+                    }
+                }
+                counter2++;
+                for(var i = 0; i < destroyer.length; i++) {
+                    if (counter2 % 30 == 0) {
+                        var bomb2 = new B2(destroyer[i].x, destroyer[i].y + destroyer[i].height)
+                        bombs.push(bomb2);
+                    }
+                }
+                for(var i = 0; i < fleet.length; i++) {
+                    fleet[i].draw(ctx);
+                }
+                for(var i = 0; i < bombs.length; i++) {
+                    bombs[i].draw(ctx);
+                }
+
+
+
+                if (turret.isCollide()) {
+                    turret.draw(ctx);
+                    ctx.fillStyle = "black"
+                    ctx.font = "50px Arial";
+                    ctx.fillText("GAME OVER", canvasWidth/2 - 50, canvasHeight/2)
+                }
+                ctx.font = "30px Arial";
+                ctx.fillStyle = "darkGreen"
+                ctx.fillText("Score = " + myScore, 10, 50);
+                ctx.fillText("Lives = " + lives, canvasWidth -200, 50);
+
+                counter++;
+                if(counter % 150 == 0) {
+                    var spaceShip = new SpaceShip((Math.random() * canvasWidth), (Math.random() * 100));
+                    fleet.push(spaceShip);
+                }
+                for(var i = 0; i < fleet.length; i++) {
+                    fleet[i].fuel -= 1;
+                    if(fleet[i].fuel == 0) {
+                        fleet[i].isActive = false;
+                    }
+                }
+            }, 10);
+            document.onkeydown = checkKey;
+        }
+
+        </script>
+    </head>
+    <body onload="startGame()">
+
+        <canvas id="myCanvas" width = "1900" height = "900" style = "border:3px solid #000000;">
+        </canvas>
+
+    </body>
+</html>
