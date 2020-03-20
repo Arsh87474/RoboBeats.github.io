@@ -10,6 +10,7 @@
         var counter2;
         var counter3;
         var bombs;
+        var drop;
         var lives;
         var canvasWidth;
         var canvasHeight;
@@ -17,9 +18,9 @@
         class Turret {
              constructor(x, y) {
                 this.x = x;
-                this.y = y - 80;
+                this.y = y - 100;
                 this.width = 160;
-                this.height = 80;
+                this.height = 100;
                 this.isSurv = true;
                 this.bottom = this.y + this.height;
                 this.left = this.x;
@@ -191,13 +192,16 @@
                  this.bottom = this.y + this.height;
                  this.left = this.x;
                  this.right = this.x + this.width;
-                 this.fall = 5;
+                 this.fall = 2;
                  this.image = new Image();
                  this.image.src= "images/alienbomb.png";
              }
              draw(ctx) {
                  if(this.isFunc == false) {
                     return;
+                }
+                if(level = 2) {
+                    this.fall = 5;
                 }
                 this.y += this.fall;
                 this.bottom = this.y + this.height;
@@ -268,6 +272,7 @@
              lives = 3;
              myScore = 0;
              level = 1;
+             drop = 150;
              turret = new Turret(1000, canvasHeight);
              fleet = [];
              bullets = [];
@@ -285,6 +290,9 @@
                 }
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
                 for(var i = 0; i < fleet.length; i++) {
                     fleet[i].updatePosition();
                     fleet[i].isCollide();
@@ -294,7 +302,6 @@
                     if (destroyer[i].isFlying == true) {
                         destroyer[i].isCollide();
                         destroyer[i].updatePosition();
-                        destroyer[i].drop++;
                     }
                 }
                 for(var i = 0; i < destroyer.length; i++) {
@@ -327,9 +334,12 @@
                         bombs.splice(i, 1);
                     }
                 }
+                if(level == 2) {
+                    drop = 100;
+                }
                 for(var i = 0; i < fleet.length; i++) {
-                    if(fleet[i].fuel % 100 == 0 ) {
-                        var bomb = new Bomb(fleet[i].x + 30, fleet[i].y + fleet[i]. height);
+                    if(fleet[i].fuel % drop == 0 ) {
+                        var bomb = new Bomb(fleet[i].x + 30, fleet[i].y + fleet[i].height);
                         bombs.push(bomb);
                     }
                 }
@@ -347,8 +357,14 @@
                     bombs[i].draw(ctx);
                 }
 
-                if(level == 1 && myScore == 20) {
+                if(level == 1 && myScore == 15) {
                     level = 2;
+                    fleet.length = 0;
+                    bombs.length = 0;
+                    myScore = 0;
+                }
+                if(level == 2 && myScore == 15) {
+                    level = 3;
                     fleet.length = 0;
                     bombs.length = 0;
                     myScore = 0;
@@ -356,25 +372,25 @@
 
                 if (turret.isCollide()) {
                     turret.draw(ctx);
-                    ctx.fillStyle = "black"
+                    ctx.fillStyle = "white"
                     ctx.font = "50px Arial";
                     ctx.fillText("GAME OVER", canvasWidth/2 - 50, canvasHeight/2)
                 }
                 ctx.font = "30px Arial";
-                ctx.fillStyle = "darkGreen"
+                ctx.fillStyle = "lightGreen"
                 ctx.fillText("Score = " + myScore, 10, 50);
                 ctx.fillText("Lives = " + lives, canvasWidth -200, 50);
                 ctx.fillText("Level = " + level, canvasWidth / 2, 50);
 
                 counter++;
-                if (level == 1) {
+                if (level == 1 || 2) {
                     if(counter % 150 == 0) {
                         var spaceShip = new SpaceShip((Math.random() * canvasWidth), (Math.random() * 100));
                         fleet.push(spaceShip);
                     }
                 }
                 counter3++;
-                if(level == 2) {
+                if(level == 3) {
                     if(counter3 % 75 == 0) {
                         var ss2 = new SS2 (0, 50);
                         destroyer.push(ss2);
@@ -394,7 +410,7 @@
     </head>
     <body onload="startGame()">
 
-        <canvas id="myCanvas" width = "1900" height = "900" style = "border:3px solid #000000;">
+        <canvas id="myCanvas" width = "1900" height = "900" style = "border:3px solid #090909;">
         </canvas>
 
     </body>
