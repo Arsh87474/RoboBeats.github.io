@@ -192,7 +192,7 @@
                  this.bottom = this.y + this.height;
                  this.left = this.x;
                  this.right = this.x + this.width;
-                 this.fall = 4;
+                 this.fall = 3.5;
                  this.image = new Image();
                  this.image.src= "images/alienbomb.png";
              }
@@ -357,16 +357,18 @@
                     bombs[i].draw(ctx);
                 }
 
-                if(level == 0 && myScore == 15) {
-                    level++;
-                    fleet.length = 0;
-                    bombs.length = 0;
-                }
-                if(level == 1 && myScore == 15) {
+                if(level == 0 && myScore == 5) {
                     level++;
                     fleet.length = 0;
                     bombs.length = 0;
                     myScore = 0;
+                }
+                if(level == 1 && myScore == 10) {
+                    level++;
+                    fleet.length = 0;
+                    bombs.length = 0;
+                    myScore = 0;
+                    lives = 3;
                 }
 
                 if (turret.isCollide()) {
