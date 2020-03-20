@@ -192,7 +192,7 @@
                  this.bottom = this.y + this.height;
                  this.left = this.x;
                  this.right = this.x + this.width;
-                 this.fall = 2;
+                 this.fall = 4;
                  this.image = new Image();
                  this.image.src= "images/alienbomb.png";
              }
@@ -200,7 +200,7 @@
                  if(this.isFunc == false) {
                     return;
                 }
-                if(level = 2) {
+                if(level == 1) {
                     this.fall = 5;
                 }
                 this.y += this.fall;
@@ -271,7 +271,7 @@
              canvasWidth = c.width;
              lives = 3;
              myScore = 0;
-             level = 1;
+             level = 0;
              drop = 150;
              turret = new Turret(1000, canvasHeight);
              fleet = [];
@@ -334,7 +334,7 @@
                         bombs.splice(i, 1);
                     }
                 }
-                if(level == 2) {
+                if(level == 1) {
                     drop = 100;
                 }
                 for(var i = 0; i < fleet.length; i++) {
@@ -357,14 +357,13 @@
                     bombs[i].draw(ctx);
                 }
 
-                if(level == 1 && myScore == 15) {
-                    level = 2;
+                if(level == 0 && myScore == 15) {
+                    level++;
                     fleet.length = 0;
                     bombs.length = 0;
-                    myScore = 0;
                 }
-                if(level == 2 && myScore == 15) {
-                    level = 3;
+                if(level == 1 && myScore == 15) {
+                    level++;
                     fleet.length = 0;
                     bombs.length = 0;
                     myScore = 0;
@@ -383,14 +382,14 @@
                 ctx.fillText("Level = " + level, canvasWidth / 2, 50);
 
                 counter++;
-                if (level == 1 || 2) {
+                if (level == 0 || 2) {
                     if(counter % 150 == 0) {
                         var spaceShip = new SpaceShip((Math.random() * canvasWidth), (Math.random() * 100));
                         fleet.push(spaceShip);
                     }
                 }
                 counter3++;
-                if(level == 3) {
+                if(level == 2) {
                     if(counter3 % 75 == 0) {
                         var ss2 = new SS2 (0, 50);
                         destroyer.push(ss2);
