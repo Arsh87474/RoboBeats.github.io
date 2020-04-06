@@ -1,4 +1,5 @@
 <html>
+    <p> Requires laptop to play. Use left and right rrow keys to move and spacebar to shoot.</p>
     <head>
         <script>
         var turret;
@@ -8,8 +9,8 @@
         var myScore;
         var counter;
         var counter2;
-        var counterReinforce;
         var bombs;
+        var backUp;
         var drop;
         var lives;
         var canvasWidth;
@@ -131,7 +132,7 @@
                  this.left = this.x;
                  this.right = this.x + this.width;
                  this.isFlying = true;
-                 this.shouldDrop = Math.round(Math.random() * 125 + 75);
+                 this.shouldDrop = Math.round(Math.random() * 100);
                  this.countDrop = 0;
                  this.image = new Image();
                  this.image.src = "images/ss2.png"
@@ -141,7 +142,7 @@
                     if(bullets[i].top <= this.bottom && bullets[i].left <= this.right && bullets[i].right >= this.left) {
                         bullets[i].isLive = false;
                         this.isFlying = false;
-                        myScore += 2
+                        myScore += 1;
                     }
                 }
             }
@@ -152,7 +153,7 @@
                 if (this.countDrop % this.shouldDrop == 0) {
                     var bomb2 = new B2(this.x, this.y);
                     bombs.push(bomb2);
-                    this.shouldDrop = Math.round(Math.random() * 70);
+                    this.shouldDrop = Math.round(Math.random() * 105);
                 }
             }
             draw(ctx) {
@@ -254,6 +255,36 @@
              }
          }
 
+         class powerUp {
+             constructor(x) {
+                 this.x = x;
+                 this.y = 0;
+                 this.width = 50;
+                 this.height = 50;
+                 this.isLoaded = true;
+                 this.speed = 10;
+                 this. left = this.x;
+                 this.right = this.x + this.width;
+             }
+             isCollected() {
+                  if (turret.left <= this.right && turret.right >= this.left) {
+                      console.log(bombs.length);
+                      bombs.splice(0, bombs.length);
+                      destroyer.splice(0, destroyer.length);
+                      myScore += 3;
+                      lives = 3;
+                      backUp.splice(0, 1);
+                  }
+             }
+             draw(ctx) {
+                 if(this.y + this.width <= canvasHeight - 30) {
+                     this.y += this.speed;
+                 }
+                 ctx.fillStyle = "white";
+                 ctx.fillRect(this.x, this.y, this.width, this.height);
+             }
+         }
+
          function checkKey(e) {
              e = e || window.event;
              if(e.keyCode == '39') {
@@ -274,8 +305,11 @@
              console.log("game started")
              var c = document.getElementById("myCanvas");
              var ctx = c.getContext("2d");
-             canvasHeight = c.height;
+             c.width = window.innerWidth - 50;
+             c.height = window.innerHeight - 75;
              canvasWidth = c.width;
+             canvasHeight = c.height;
+             var help = new powerUp(Math.round(Math.random() * 1000 + 30));
              var nextdestroyercount = 1;
              lives = 3;
              myScore = 0;
@@ -286,20 +320,27 @@
              bullets = [];
              bombs = [];
              destroyer = [];
+             backUp = [];
              console.log(fleet.length);
              console.log("destroyer length: " + destroyer.length)
              counter = 0;
              counter2 = 0;
+             backUp.push(help);
              setInterval(function () {
                 if (lives == 0 ) {
                     turret.draw(ctx);
                     return;
                 }
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
                 ctx.fillStyle = "black";
                 ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
+                if (level == 2) {
+                    for(var i = 0; i < backUp.length; i++) {
+                        backUp[i].draw(ctx);
+                        backUp[i].isCollected();
+                    }
+                }
                 for(var i = 0; i < fleet.length; i++) {
                     fleet[i].updatePosition();
                     fleet[i].isCollide();
@@ -343,7 +384,7 @@
                     }
                 }
                 if(level == 1) {
-                    drop = 100;
+                    drop = 75;
                 }
                 for(var i = 0; i < fleet.length; i++) {
                     if(fleet[i].fuel % drop == 0 ) {
@@ -415,7 +456,7 @@
     </head>
     <body onload="startGame()">
 
-        <canvas id="myCanvas" width = "1900" height = "900" style = "border:3px solid #090909;">
+        <canvas id="myCanvas" width="1200" height="965" style = "border : 3px solid #090909;">
         </canvas>
 
     </body>
