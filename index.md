@@ -1,4 +1,2 @@
 ## Space Destroyer
 Click [here](shooter/shooter.html) to play.
-##The Lane Game
-Click [here](Lane_Game/lane game) to play.
