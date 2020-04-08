@@ -1,0 +1,186 @@
+<html>
+    <head>
+        <h2>Avoid obstacles and cars. If you get to close, your car will get damaged.</h2>
+        <script>
+
+        //Global variables
+        var background;
+        var car;
+        var obstacles;
+        var counObsDraw;
+        var myLives;
+        var myScore;
+        var counScore;
+
+        class Car {
+            constructor(x) {
+                this.x = x;
+                this.y = 600;
+                this.width = 150;
+                this.height = 150;
+                this.left = this.x;
+                this.right = this.x + this.width;
+                this.top = this.y;
+                this.bottom = this.y + this.height;
+                this.isFunc = true;
+                this.image = new Image();
+                this.image.src = "Images/car.png";
+            }
+            draw(ctx) {
+                if (this.isFunc == true) {
+                    // ctx.fillStyle = "darkBlue";
+                    // ctx.fillRect(this.x, this.y, this.width, this.height);
+                    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                }
+            }
+            moveLeft(dis) {
+                this.x -= dis;
+                this.left = this.x;
+                this.right = this.x + this.width;
+                if (this.x < canvasWidth / 4) {
+                    this.x = canvasWidth / 4;
+                }
+            }
+            moveRight(dis) {
+                this.x += dis;
+                if (this.x + this.width >= canvasWidth - canvasWidth / 4) {
+                    this.x = canvasWidth - (canvasWidth / 4 + this.width);
+                }
+            }
+            isCollide() {
+                for (var i = 0; i < obstacles.length; i++) {
+                    if (this.left <= obstacles[i].right && this.right >= obstacles[i].left && this.top <= obstacles[i].bottom) {
+                        myLives -= 1;
+                        obstacles.splice(i, 1)
+                        if (myLives == 0) {
+                            this.isFunc = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        class Obstacle {
+            constructor(x) {
+                this.x = x;
+                this.y = -70;
+                this.width = 150;
+                this.height = 200;
+                this.left = this.x;
+                this.right = this.x + this.width;
+                this.bottom = this.y + this.height;
+                this.top = this.y;
+                this.image = new Image();
+                this.image.src = "Images/Barricade.png";
+            }
+            draw(ctx) {
+                this.y += 7;
+                this.bottom = this.y + this.height;
+                // ctx.fillStyle = "brown";
+                // ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            }
+        }
+
+        class Background {
+            constructor() {
+                this.x = 0;
+                this.y = -canvasHeight;
+                this.height = canvasHeight * 2;
+                this.width = canvasWidth;
+                this.image = new Image();
+                this.image.src = "Images/Background.png";
+            }
+            draw(ctx) {
+                this.y += 7;
+                if(this.y >= 0) {
+                    this.y = -canvasHeight;
+                }
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            }
+        }
+
+        function checkKey(e) {
+            e = e || window.event;
+            if(e.keyCode == '39') {
+                //right
+                car.moveRight(75);
+            }
+            else if(e.keyCode == '37') {
+                //left
+                car.moveLeft(75);
+            }
+        }
+
+        function startGame() {
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+            c.width = window.innerWidth - 50;
+            c.height = window.innerHeight - 75;
+            canvasHeight = c.height;
+            canvasWidth = c.width;
+            counObsDraw = 1;
+            myLives = 3;
+            myScore = 0;
+            car = new Car(canvasWidth / 2);
+            obstacles = [];
+            background = new Background;
+            setInterval(function() {
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                background.draw(ctx);
+                ctx.fillStyle = "gray";
+                ctx.fillRect(canvasWidth / 4, 0, canvasWidth / 2, canvasHeight);
+
+                car.draw(ctx);
+
+                for (var i = 0; i < obstacles.length; i++) {
+                    if(obstacles[i].x < canvasWidth / 4) {
+                        obstacles[i].x = canvasWidth / 4;
+                        obstacles[i].left = obstacles[i].x;
+                        obstacles[i].right = obstacles[i].x + obstacles[i].width
+                    }
+                    if(obstacles[i].right > canvasWidth / 4 * 3) {
+                        obstacles[i].x = canvasWidth / 4 * 3 - obstacles[i].width;
+                        obstacles[i].left = obstacles[i].x;
+                        obstacles[i].right = obstacles[i].x + obstacles[i].width
+                    }
+                }
+
+                if(car.isFunc == false) {
+                    ctx.fillStyle = "maroon";
+                    ctx.font = "100px Arial";
+                    ctx.fillText("GAME OVER", canvasWidth/2 - canvasWidth/6, canvasHeight/2)
+                }
+
+                ctx.font = "30px Arial";
+                ctx.fillStyle = "black";
+                ctx.fillText("Score = " + myScore, 10, 50);
+                ctx.fillText("Lives = " + myLives, canvasWidth -200, 50);
+                for (var i = 0; i < obstacles.length; i++) {
+                    if(obstacles[i].y > car.bottom) {
+                        obstacles.splice(i, 1)
+                    }
+                    obstacles[i].draw(ctx)
+                }
+                car.isCollide();
+                counObsDraw++;
+                if (counObsDraw % Math.round(Math.random() * 200 + 50) == 0) {
+                    var obstacle = new Obstacle(Math.round(Math.random() * canvasWidth / 2 + canvasWidth / 4))
+                    obstacles.push(obstacle);
+                }
+                counScore++;
+                if(counScore % 100 == 0) {
+                    myScore++;
+                }
+            }, 10)
+        }
+            document.onkeydown = checkKey;
+        </script>
+    </head>
+    <body onload="startGame()">
+
+        <canvas id="myCanvas" width = "1900" height = "900" style = "border:3px solid #000000">
+        </canvas>
+
+    </body>
+</html>
