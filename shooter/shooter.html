@@ -2,6 +2,7 @@
     <p> Requires laptop to play. Use left and right rrow keys to move and spacebar to shoot.</p>
     <head>
         <script>
+        //Global var
         var turret;
         var fleet;
         var destroyer;
@@ -16,6 +17,8 @@
         var canvasWidth;
         var canvasHeight;
         var level;
+        var touchStartY;
+        var touchStartX;
         class Turret {
              constructor(x, y) {
                 this.x = x;
@@ -301,6 +304,35 @@
                  bullets.push(bullet);
              }
          }
+
+         function touchStart(e) {
+             e = e || window.event;
+             var touchobj = e.changedTouches[0];
+             touchStartX = touchobj.pageX;
+             touchStartY = touchobj.pageY;
+         }
+
+         function touchEnd(e) {
+             e = e || window.event;
+             var touchobj = e.changedTouches[0];
+             var touchEndX = touchobj.pageX;
+             var touchEndY = touchobj.pageY;
+             var touchXChange = touchEndX - touchStartX;
+             if (touchXChange > 30) {
+                 //right
+                 turret.moveRight(50);
+             }
+             else if (touchXChange < 0) {
+                 //left
+                 turret.moveLeft(50);
+             }
+             else {
+                 //tap
+                 var bullet = new Bullet(turret.x + turret.width/2, turret.y);
+                 bullets.push(bullet);
+             }
+         }
+
          function startGame() {
              console.log("game started")
              var c = document.getElementById("myCanvas");
@@ -450,6 +482,8 @@
                 }
             }, 10);
             document.onkeydown = checkKey;
+            document.ontouchstart = touchStart;
+            document.ontouchend = touchEnd;
         }
 
         </script>
