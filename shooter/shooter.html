@@ -1,5 +1,6 @@
 <html>
-    <p> Requires laptop to play. Use left and right rrow keys to move and spacebar to shoot.</p>
+    <p> Use left and right arrow keys to move and spacebar to shoot.</p>
+    <p> Swipe left or right to move and tap to shoot.</p>
     <head>
         <script>
         //Global var
@@ -320,11 +321,11 @@
              var touchXChange = touchEndX - touchStartX;
              if (touchXChange > 30) {
                  //right
-                 turret.moveRight(touchXChange * 0.5);
+                 turret.moveRight(75);
              }
              else if (touchXChange < 0) {
                  //left
-                 turret.moveLeft(touchXChange * -0.5);
+                 turret.moveLeft(75);
              }
              else {
                  //tap
