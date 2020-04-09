@@ -320,12 +320,12 @@
              var touchXChange = touchEndX - touchStartX;
              if (touchXChange > 30) {
                  //right
-                 turret.moveRight(touchXChange * 10);
+                 turret.moveRight(touchXChange * 1);
                  alert(touchXChange);
              }
              else if (touchXChange < 0) {
                  //left
-                 turret.moveLeft(touchXChange * -10);
+                 turret.moveLeft(touchXChange * -1);
              }
              else {
                  //tap
