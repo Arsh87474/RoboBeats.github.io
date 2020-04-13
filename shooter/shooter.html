@@ -1,5 +1,5 @@
 <html>
-<p>Use arrow keys to move and spacebar to shoot or swipe left and right to move and tap to shoot</p>
+    <p> Requires laptop to play. Use left and right rrow keys to move and spacebar to shoot.</p>
     <head>
         <script>
         //Global var
@@ -19,6 +19,22 @@
         var level;
         var touchStartY;
         var touchStartX;
+        var mySound;
+        var mySound2;
+        function sound(src) {
+            this.sound = document.createElement("audio");
+            this.sound.src = src;
+            this.sound.setAttribute("preload", "auto");
+            this.sound.setAttribute("controls", "none");
+            this.sound.style.display = "none";
+            document.body.appendChild(this.sound);
+            this.play = function(){
+                this.sound.play();
+            }
+            this.stop = function(){
+                this.sound.pause();
+            }
+        }
         class Turret {
              constructor(x, y) {
                 this.x = x;
@@ -61,9 +77,9 @@
                     if (bombs[i].bottom >= this.y && bombs[i].left <= this.right && bombs[i].right >= this.left) {
                         bombs[i].isFunc = false;
                         lives -= 1;
-                        bombs[i].width += 30
-                        bombs[i].image.src = "images/explosion.png";
+                        mySound.play();
                         if (lives == 0) {
+                            mySound2.play();
                             this.width += 10
                             this.height += 10
                             this.image.src = "images/explosion.png";
@@ -320,11 +336,11 @@
              var touchXChange = touchEndX - touchStartX;
              if (touchXChange > 30) {
                  //right
-                 turret.moveRight(75);
+                 turret.moveRight(50);
              }
              else if (touchXChange < 0) {
                  //left
-                 turret.moveLeft(75);
+                 turret.moveLeft(50);
              }
              else {
                  //tap
@@ -338,16 +354,18 @@
              var c = document.getElementById("myCanvas");
              var ctx = c.getContext("2d");
              c.width = window.innerWidth - 50;
-             c.height = window.innerHeight - 100;
+             c.height = window.innerHeight - 75;
              canvasWidth = c.width;
              canvasHeight = c.height;
              var help = new powerUp(Math.round(Math.random() * 1000 + 30));
              var nextdestroyercount = 1;
              lives = 3;
+             mySound = new sound("Sounds/Explosion.mov");
+             mySound2 = new sound("Sounds/FinalExplosion.mp3");
              myScore = 0;
              level = 0;
              drop = 150;
-             turret = new Turret(canvasWidth/2, canvasHeight);
+             turret = new Turret(1000, canvasHeight);
              fleet = [];
              bullets = [];
              bombs = [];
@@ -450,7 +468,7 @@
                     turret.draw(ctx);
                     ctx.fillStyle = "white"
                     ctx.font = "50px Arial";
-                    ctx.fillText("GAME OVER", canvasWidth/2 - 50, canvasHeight/2)
+                    ctx.fillText("GAME OVER", canvasWidth/2 - 100, canvasHeight/2)
                 }
                 ctx.font = "30px Arial";
                 ctx.fillStyle = "lightGreen";
