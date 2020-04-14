@@ -83,7 +83,10 @@
                             this.width += 10
                             this.height += 10
                             this.image.src = "images/explosion.png";
-                            return true;
+                            setTimeout(stop, 3000);
+                            stop() {
+                                return true;
+                            }
                         }
                     }
                 }
