@@ -83,10 +83,10 @@
                             this.width += 10
                             this.height += 10
                             this.image.src = "images/explosion.png";
+                            setTimeout(stop, 3000);
                             function stop() {
                                 return true;
                             }
-                            setTimeout(stop, 3000);
                         }
                     }
                 }
@@ -136,10 +136,10 @@
                      if(bullets[i].top <= this.bottom && bullets[i].left <= this.right && bullets[i].right >= this.left) {
                          bullets[i].isLive = false;
                          this.isActive = false;
-                         this.width += 10;
-                         this.height += 10;
+                         this.width += 10
+                         this.height += 10
                          this.image.src = "images/explosion.png";
-                         myScore += 1;
+                         myScore += 1
                      }
                  }
              }
