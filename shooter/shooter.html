@@ -86,6 +86,7 @@
                             setTimeout(stop, 3000);
                             function stop() {
                                 return true;
+                            }
                         }
                     }
                 }
@@ -116,10 +117,11 @@
                  if(this.x < 0) {
                      this.x = 0;
                  }
-                 if(this.x > canvasWidth - this.width)
-                    this.x = canvasWidth  - this.width;
-                this.left = this.x;
-                this.right = this.x + this.width;
+                 if(this.x > canvasWidth - this.width) {
+                     this.x = canvasWidth  - this.width;
+                     this.left = this.x;
+                     this.right = this.x + this.width;
+                 }
              }
              draw(ctx) {
                  if(this.isActive == true) {
