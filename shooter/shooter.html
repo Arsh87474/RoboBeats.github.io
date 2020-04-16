@@ -19,8 +19,8 @@
         var level;
         var touchStartY;
         var touchStartX;
-        var mySound;
-        var mySound2;
+        var mySound = new Audio("Sounds/bombSound.mp3");
+        var mySound2 = new Audio("Sounds/finalSound.mp3");
         function sound(src) {
             this.sound = document.createElement("audio");
             this.sound.src = src;
