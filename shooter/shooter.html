@@ -79,10 +79,10 @@
                         lives -= 1;
                         mySound.play();
                         if (lives == 0) {
-                            mySound2.play();
                             this.width += 10
                             this.height += 10
                             this.image.src = "images/explosion.png";
+                            mySound2.play();
                             setTimeout(stop, 3000);
                             function stop() {
                                 return true;
