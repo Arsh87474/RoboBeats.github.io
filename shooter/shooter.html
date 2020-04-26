@@ -3,6 +3,7 @@
     <head>
         <script>
         //Global var
+        var gameBegun;
         var turret;
         var fleet;
         var destroyer;
@@ -21,6 +22,8 @@
         var touchStartX;
         var mySound = new Audio("Sounds/bombSound.mp3");
         var mySound2 = new Audio("Sounds/finalSound.mp3");
+        var nextdestroyercount;
+        var startImage;
         function sound(src) {
             this.sound = document.createElement("audio");
             this.sound.src = src;
@@ -84,10 +87,12 @@
                             this.width += 10
                             this.height += 10
                             this.image.src = "images/explosion.png";
-                            setTimeout(stop, 3000);
+                            setTimeout(stop, 6000);
                             function stop() {
-                                return true;
+                                initGame();
+                                gameBegun = false;
                             }
+                            return true;
                         }
                     }
                 }
@@ -259,7 +264,7 @@
                  this.fall = 5;
                  this.slant = 2;
                  this.image = new Image();
-                 this.image.src= "images/B2_img.png";
+                 this.image.src = "images/B2_img.png";
              }
              draw(ctx) {
                  if(this.isFunc == false) {
@@ -321,8 +326,13 @@
              }
              else if(e.keyCode == '32') {
                  //spacebar
-                 var bullet = new Bullet(turret.x + turret.width/2, turret.y);
-                 bullets.push(bullet);
+                 if (gameBegun) {
+                     var bullet = new Bullet(turret.x + turret.width/2, turret.y);
+                     bullets.push(bullet);
+                 }
+                 else {
+                     gameBegun = true;
+                 }
              }
          }
 
@@ -349,21 +359,22 @@
              }
              else {
                  //tap
-                 var bullet = new Bullet(turret.x + turret.width/2, turret.y);
-                 bullets.push(bullet);
+                 if (gameBegun) {
+                     var bullet = new Bullet(turret.x + turret.width/2, turret.y);
+                     bullets.push(bullet);
+                 }
+                 else {
+                     mySound.load();
+                     mySound2.load();
+                     gameBegun = true;
+                 }
              }
          }
 
-         function startGame() {
-             console.log("game started")
-             var c = document.getElementById("myCanvas");
-             var ctx = c.getContext("2d");
-             c.width = window.innerWidth - 50;
-             c.height = window.innerHeight - 75;
-             canvasWidth = c.width;
-             canvasHeight = c.height;
+         function initGame() {
              var help = new powerUp(Math.round(Math.random() * 1000 + 30));
-             var nextdestroyercount = 1;
+             nextdestroyercount = 1;
+             gameBegun = false;
              lives = 3;
              mySound = new Audio("Sounds/bombSound.mp3");
              mySound2 = new Audio("Sounds/finalSound.mp3");
@@ -381,7 +392,31 @@
              counter = 0;
              counter2 = 0;
              backUp.push(help);
+         }
+
+         function startGame() {
+             console.log("game started")
+             var c = document.getElementById("myCanvas");
+             var ctx = c.getContext("2d");
+             c.width = window.innerWidth - 50;
+             c.height = window.innerHeight - 75;
+             canvasWidth = c.width;
+             canvasHeight = c.height;
+             startImage = new Image();
+             startImage.src = "images/startButton.png";
+             initGame();
+             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+             ctx.fillStyle = "black";
+             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
              setInterval(function () {
+                if (!gameBegun){
+                    console.log("gameNoStart");
+                    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                    ctx.fillStyle = "black";
+                    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                    ctx.drawImage(startImage, canvasWidth/2 - 75, canvasHeight/2 - 65, 150, 130);
+                    return;
+                }
                 if (lives == 0 ) {
                     turret.draw(ctx);
                     return;
