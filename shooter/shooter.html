@@ -20,8 +20,8 @@
         var level;
         var touchStartY;
         var touchStartX;
-        var mySound = new Audio("Sounds/bombSound.mp3");
-        var mySound2 = new Audio("Sounds/finalSound.mp3");
+        var mySound;
+        var mySound2;
         var nextdestroyercount;
         var startImage;
         function sound(src) {
@@ -377,7 +377,7 @@
              gameBegun = false;
              lives = 3;
              mySound = new Audio("Sounds/bombSound.mp3");
-             mySound2 = new Audio("Sounds/finalSound.mp3");
+             mySound2 = new Audio("Sounds/finalSound.mov");
              myScore = 0;
              level = 0;
              drop = 150;
